@@ -10,6 +10,9 @@ COPY . /app
 # Create logs directory
 RUN mkdir -p /app/logs
 
+# Create book_images directory
+RUN mkdir -p /app/book_images
+
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
