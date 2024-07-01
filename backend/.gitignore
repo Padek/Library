@@ -2,3 +2,4 @@ data/
 logs/*
 !logs/.gitignore
 **/__pycache__/
+src/library/books/__pycache__/
