@@ -17,9 +17,6 @@
 
 **Installation and Setup and Variables
 - cd backend
-- cmkdir -p data
-- touch data/.env
-- echo 'mongoDB_url = "mongodb+srv://admin:SecretPassword42@cluster0.b6mhx1i.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"' > data/.env
 - docker-compose up --build
 
 
