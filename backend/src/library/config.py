@@ -1,7 +1,12 @@
 from starlette.config import Config
 from pymongo import MongoClient
+import logging
 
 config = Config("../data/.env")
+
+#Set Log Lvl
+LOG_LEVEL = logging.INFO
+ENV = "PROD"
 
 # Set up database, MongoDbAtlas
 client = MongoClient(config("mongoDB_url"))
