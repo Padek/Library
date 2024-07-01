@@ -18,9 +18,12 @@ This is a RESTful API for managing a library. The API supports CRUD operations f
 
 ## Installation and Setup and Variables
 - cd backend
-- cmkdir -p data
-- touch data/.env
-- echo 'mongoDB_url = "mongodb+srv://admin:SecretPassword42@cluster0.b6mhx1i.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"' > data/.env
+- cmkdir -p data (mac) OR mkdir -p data (on Windows)
+- cd data
+- touch data/.env (mac) OR New-Item -Path .env -ItemType File (on Windows)
+- echo 'mongoDB_url = "mongodb+srv://admin:SecretPassword42@cluster0.b6mhx1i.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"' > data/.env (mac)
+    -- echo mongoDB_url = "mongodb+srv://admin:SecretPassword42@cluster0.b6mhx1i.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0" > .env (Windows)
+- cd ..
 - docker-compose up --build
 
 ### Clone the Repository
