@@ -1,49 +1,44 @@
 from fastapi import HTTPException
-from bson import ObjectId
-from bson.errors import InvalidId
+from pymongo import ReturnDocument
 
-#Local imports
-from library.config import books_collection
-from .models import Book
+# Local imports
+from library.config import books_collection, id_tracker_collection
+from .models import Book, BookCreate, BookUpdate
 
+def get_next_id():
+    return id_tracker_collection.find_one_and_update(
+        {"_id": "book_id"},
+        {"$inc": {"next_id": 1}},
+        return_document=ReturnDocument.AFTER
+    )["next_id"]
 
-async def create_book_in_db(book: Book):
-    result = await books_collection.insert_one(book.model_dump())
+def create_book_in_db(book: BookCreate):
+    book_id = get_next_id()
+    book_data = book.dict()
+    book_data["id"] = book_id
+    result = books_collection.insert_one(book_data)
     if result.inserted_id:
-        return book
+        return book_data
     raise HTTPException(status_code=500, detail="Book creation failed")
 
-
-async def get_all_books_from_db():
-    books = await books_collection.find().to_list(1000)
+def get_all_books_from_db():
+    books = list(books_collection.find())
     return books
 
-
-async def get_book_from_db(book_id: str):
-    try:
-        book = await books_collection.find_one({"_id": ObjectId(book_id)})
-    except InvalidId:
-        raise HTTPException(status_code=400, detail="Invalid book ID format")
+def get_book_from_db(book_id: int):
+    book = books_collection.find_one({"id": book_id})
     if book:
         return Book(**book)
     raise HTTPException(status_code=404, detail="Book not found")
 
-
-async def update_book_in_db(book_id: str, book: Book):
-    try:
-        result = await books_collection.update_one({"_id": ObjectId(book_id)}, {"$set": book.dict()})
-    except InvalidId:
-        raise HTTPException(status_code=400, detail="Invalid book ID format")
+def update_book_in_db(book_id: int, book: BookUpdate):
+    result = books_collection.update_one({"id": book_id}, {"$set": book.dict()})
     if result.modified_count == 1:
-        return book
+        return get_book_from_db(book_id)
     raise HTTPException(status_code=404, detail="Book not found")
 
-
-async def delete_book_from_db(book_id: str):
-    try:
-        result = await books_collection.delete_one({"_id": ObjectId(book_id)})
-    except InvalidId:
-        raise HTTPException(status_code=400, detail="Invalid book ID format")
+def delete_book_from_db(book_id: int):
+    result = books_collection.delete_one({"id": book_id})
     if result.deleted_count == 1:
         return {"message": "Book deleted successfully"}
     raise HTTPException(status_code=404, detail="Book not found")
