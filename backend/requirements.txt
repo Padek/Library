@@ -6,3 +6,5 @@ python-jose[cryptography]
 passlib[bcrypt]
 pymongo
 python-multipart
+pytest
+httpx

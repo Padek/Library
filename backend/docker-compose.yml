@@ -15,3 +15,11 @@ services:
     image: mongo
     ports:
       - "27017:27017"
+  
+  tests:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    command: ["pytest", "src/tests"]
+    depends_on:
+      - mongodb
