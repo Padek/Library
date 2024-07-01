@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, File, UploadFile, HTTPException
+from fastapi.responses import FileResponse
 from typing import List
 
 # Local imports
@@ -7,7 +8,9 @@ from .services import (
     get_all_books_from_db,
     get_book_from_db,
     update_book_in_db,
-    delete_book_from_db
+    delete_book_from_db,
+    upload_book_image,
+    get_book_image
 )
 from .models import Book, BookCreate, BookUpdate
 from library.users.services import get_current_user
@@ -33,3 +36,11 @@ def update_book(book_id: int, book: BookUpdate):
 @books.delete("/{book_id}", dependencies=[Depends(get_current_user)])
 def delete_book(book_id: int):
     return delete_book_from_db(book_id)
+
+@books.post("/{book_id}/upload_image", dependencies=[Depends(get_current_user)])
+async def upload_image(book_id: int, file: UploadFile = File(...)):
+    return await upload_book_image(book_id, file)
+
+@books.get("/{book_id}/image", response_class=FileResponse, dependencies=[Depends(get_current_user)])
+async def get_image(book_id: int):
+    return await get_book_image(book_id)
