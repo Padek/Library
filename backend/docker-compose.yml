@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  library:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8005:8000"
+
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
