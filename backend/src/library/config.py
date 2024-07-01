@@ -1,10 +1,17 @@
-from motor.motor_asyncio import AsyncIOMotorClient
 from starlette.config import Config
+from pymongo import MongoClient
 
 config = Config("../data/.env")
 
-
-#set up database, MongoDbAtlas
-client = AsyncIOMotorClient(config("mongoDB_url"))
+# Set up database, MongoDbAtlas
+client = MongoClient(config("mongoDB_url"))
 db = client.library
 books_collection = db.books
+users_collection = db.users
+
+# Collection to track the next available ID for books
+id_tracker_collection = db.id_tracker
+
+# Ensure the ID tracker has an entry for books
+if not id_tracker_collection.find_one({"_id": "book_id"}):
+    id_tracker_collection.insert_one({"_id": "book_id", "next_id": 1})
